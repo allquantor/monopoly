@@ -8,7 +8,7 @@ import sbtdocker.ImageName
 
 name := """monopoly"""
 
-organization := "com.mintbeans"
+organization := "com.haw"
 
 version := "0.1-SNAPSHOT"
 

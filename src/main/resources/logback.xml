@@ -8,7 +8,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.mintbeans" level="INFO" />
+    <logger name="com.haw" level="INFO" />
 
     <logger name="org.eclipse.jetty" level="INFO" />
     <logger name="com.mongodb.casbah" level="INFO" />
