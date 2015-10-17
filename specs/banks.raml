@@ -1,0 +1,107 @@
+#%RAML 0.8
+title: restopoly
+version: v0.1
+/banks:
+  get:
+    description: Gives you a list of all avaible banks
+    responses:
+      200:
+        body:
+          application/json:
+
+            schema: |
+              {"type": "text",
+              "properties" : {"bank_list" : {"type" : "WASTYP"}
+                }
+              }
+            example: '{"bank_list" : "[1,2,3,4,5]"}'
+  put:
+    description: Creates a bank
+    queryParameters:
+      playerIDs:
+        description: IDs of all players for a bank
+        displayName: NumPayers
+        required: true
+        type: integer
+        maximum: 1
+        default: 4
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              {"type": "text",
+              "properties" : {
+                "bank_id" : {"type" : "integer"}
+                , "players" : {"type" : "integer"}
+                }
+              }
+            example: '{"bank_id" : "1", "players" : "4"}'
+  delete:
+    description: Removes a bank
+    queryParameters:
+      bankId:
+        description: Id of bank to be deleted
+        displayName: Bank Id
+        required: true
+        type: integer
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              {"type": "text",
+              "properties" : {"exit_code" : {"type" : "string"}
+                }
+              }
+            example: '{"exit_code" : "1"}'
+  /{bankId}:
+    /players:
+      get:
+        description: Get the id of all players available for this bank
+        responses:
+          200:
+            body:
+              application/json:
+                schema:
+                example: '{"players" : "[1,2,3,4,5]"}'
+      /{playerId}:
+        /balance:
+          get:
+            description: Get the balance of a player
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: |
+                      {"type": "object",
+                      "properties" : {"balance" : {"type" : "integer"}
+                        }
+                      }
+                    example: '{"balance" : "1111"}'
+          post:
+            description: Changes the balance for a players bank accound
+            queryParameters:
+              amount:
+                description: Amount to be added or withdrawn
+                displayName: Amount
+                required: true
+                type: integer
+              verb:
+                description: What to do with amount
+                displayName: Verb
+                required: true
+                type: string
+                pattern: '(plus|minus)'
+            responses:
+              200:
+                body:
+                  application/json:
+                    schema: |
+                      {"type": "text",
+                        "properties" : {"new_balance" : {"type" : "integer",
+                          "old_balance" : {"type" : "integer"}
+                          }
+                        }
+                        }
+                    example: '{"new_balance" : "1111", "old_balance" : "1112}'
