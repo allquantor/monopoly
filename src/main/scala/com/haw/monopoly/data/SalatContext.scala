@@ -1,6 +1,6 @@
-package com.mintbeans.geo.data
+package com.haw.monopoly.data
 
-import com.mintbeans.geo.core.Point
+import com.haw.monopoly.core.Point
 import com.mongodb.DBObject
 import com.mongodb.casbah.commons.Imports._
 import com.novus.salat._

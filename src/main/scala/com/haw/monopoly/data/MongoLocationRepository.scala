@@ -1,6 +1,6 @@
-package com.mintbeans.geo.data
+package com.haw.monopoly.data
 
-import com.mintbeans.geo.core.{Location, LocationRepository}
+import com.haw.monopoly.core.{Location, LocationRepository}
 import com.mongodb.casbah.MongoCollection
 import com.mongodb.casbah.commons.Imports._
 import com.mongodb.casbah.commons.MongoDBObject
@@ -10,8 +10,8 @@ class MongoLocationRepository(collection: MongoCollection) extends LocationRepos
 
   def all(limit: Option[Int]): Seq[Location] = {
     collection.find
-              .limit(limit.getOrElse(0))
-              .toList.map(o => grater[Location].asObject(o))
+      .limit(limit.getOrElse(0))
+      .toList.map(o => grater[Location].asObject(o))
   }
 
   def byId(id: org.bson.types.ObjectId): Option[Location] = {
@@ -23,14 +23,14 @@ class MongoLocationRepository(collection: MongoCollection) extends LocationRepos
 
   def byNameFragment(name: String, limit: Option[Int]): Seq[Location] = {
     collection.find(MongoDBObject("name" -> s"(?i).*\\Q${name}\\E.*".r))
-              .limit(limit.getOrElse(0))
-              .toList.map(o => grater[Location].asObject(o))
+      .limit(limit.getOrElse(0))
+      .toList.map(o => grater[Location].asObject(o))
   }
 
   def byTextPhrase(phrase: String, limit: Option[Int]): Seq[Location] = {
     collection.find(MongoDBObject("$text" -> MongoDBObject("$search" -> phrase)))
-              .limit(limit.getOrElse(0))
-              .toList.map(o => grater[Location].asObject(o))
+      .limit(limit.getOrElse(0))
+      .toList.map(o => grater[Location].asObject(o))
   }
 
 }

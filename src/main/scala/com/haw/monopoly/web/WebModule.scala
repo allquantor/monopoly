@@ -1,6 +1,6 @@
-package com.mintbeans.geo.web
+package com.haw.monopoly.web
 
-import com.mintbeans.geo.core.LocationRepository
+import com.haw.monopoly.core.LocationRepository
 import com.softwaremill.macwire.MacwireMacros._
 
 trait WebModule {
@@ -8,5 +8,8 @@ trait WebModule {
   def locationRepository: LocationRepository
 
   lazy val locationController = wire[LocationController]
+
+  lazy val diceController = wire[DiceController]
+
 
 }

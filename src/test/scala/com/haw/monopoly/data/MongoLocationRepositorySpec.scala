@@ -1,7 +1,7 @@
-package com.mintbeans.geo.data
+package com.haw.monopoly.data
 
 import com.github.simplyscala.{MongoEmbedDatabase, MongodProps}
-import com.mintbeans.geo.core.{Location, LocationFixtures}
+import com.haw.monopoly.core.{Location, LocationFixtures}
 import com.mongodb.DBObject
 import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.MongoClient
@@ -22,7 +22,7 @@ class MongoLocationRepositorySpec extends FlatSpec with Matchers with MongoEmbed
     def withMongo(fixture: MongodProps => Any) = withEmbedMongoFixture(port = mongoPort, version = Version.V2_6_1)(fixture)
 
     def withLocations(names: String*)(testFun: => Unit) = new LocationFixtures {
-      locations(names:_*).foreach({ l =>
+      locations(names: _*).foreach({ l =>
         collection.insert(grater[Location].asDBObject(l), WriteConcern.Safe)
       })
 
@@ -39,7 +39,7 @@ class MongoLocationRepositorySpec extends FlatSpec with Matchers with MongoEmbed
 
     def withTextIndex(field: String)(testFun: => Unit) = {
       collection.createIndex(MongoDBObject(field -> "text"))
-      collection.indexInfo.exists( idx => idx.get("key").asInstanceOf[DBObject].toMap.values().contains("text")) should be (true)
+      collection.indexInfo.exists(idx => idx.get("key").asInstanceOf[DBObject].toMap.values().contains("text")) should be(true)
 
       testFun
     }

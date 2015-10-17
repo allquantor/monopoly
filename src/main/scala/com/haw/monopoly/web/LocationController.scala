@@ -1,6 +1,6 @@
-package com.mintbeans.geo.web
+package com.haw.monopoly.web
 
-import com.mintbeans.geo.core.LocationRepository
+import com.haw.monopoly.core.LocationRepository
 import org.json4s._
 import org.scalatra.json.JacksonJsonSupport
 import org.scalatra.{BadRequest, NotFound, Ok, ScalatraServlet}

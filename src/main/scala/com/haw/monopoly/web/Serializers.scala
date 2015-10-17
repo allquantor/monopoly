@@ -1,4 +1,4 @@
-package com.mintbeans.geo.web
+package com.haw.monopoly.web
 
 import org.json4s.JsonAST.JString
 import org.json4s._

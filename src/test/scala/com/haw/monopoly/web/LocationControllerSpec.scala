@@ -1,6 +1,7 @@
-package com.mintbeans.geo.web
+package com.haw.monopoly.web
 
-import com.mintbeans.geo.core.{Location, LocationFixtures, LocationRepository}
+import com.haw.monopoly.core.{Location, LocationFixtures, LocationRepository}
+import com.mintbeans.geo.core.LocationRepository
 import org.bson.types.ObjectId
 import org.json4s.jackson.JsonMethods._
 import org.json4s.{DefaultFormats, Formats, _}

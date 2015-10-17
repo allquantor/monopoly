@@ -1,6 +1,6 @@
-package com.mintbeans.geo.data
+package com.haw.monopoly.data
 
-import com.mintbeans.geo.core.LocationRepository
+import com.haw.monopoly.core.LocationRepository
 import com.mongodb.casbah.MongoClient
 import com.softwaremill.macwire.MacwireMacros._
 import com.typesafe.config.Config

@@ -1,7 +1,10 @@
 import AssemblyKeys._
 import DockerKeys._
+import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
+import com.typesafe.sbt.packager.docker.DockerPlugin
 import sbtdocker.mutable.Dockerfile
 import sbtdocker.ImageName
+
 
 name := """monopoly"""
 
@@ -13,11 +16,14 @@ scalaVersion := "2.11.6"
 
 scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation", "-encoding", "utf8")
 
+sbtPlugin := true
+
 resolvers ++= Seq(
     "Sonatype Snapshots"  at "https://oss.sonatype.org/content/repositories/snapshots/",
     "Sonatype Releases"   at "http://oss.sonatype.org/content/repositories/releases",
     "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 )
+
 
 libraryDependencies ++= {
     val configVersion     = "1.2.1"
@@ -48,6 +54,8 @@ libraryDependencies ++= {
     )
 }
 
+
+
 mainClass := Some("com.mintbeans.geo.LocationProvider")
 
 initialCommands in console := """
@@ -72,7 +80,7 @@ dockerfile in docker := {
     val logbackFile = baseDirectory.value / "src" / "main" / "resources" / "logback.xml"
     val logbackFileTargetPath = "/app/logback.xml"
     new Dockerfile {
-        from("dockerfile/java")
+        from("java:7")
         add(artifact, artifactTargetPath)
         add(configFile, configFileTargetPath)
         add(logbackFile, logbackFileTargetPath)
@@ -91,3 +99,10 @@ imageName in docker := {
               repository = name.value,
               tag = Some("v" + version.value))
 }
+
+
+fork in run := true
+
+
+
+
