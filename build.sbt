@@ -56,7 +56,7 @@ libraryDependencies ++= {
 
 
 
-mainClass := Some("com.mintbeans.geo.LocationProvider")
+mainClass := Some("com.haw.monopoly.Dice")
 
 initialCommands in console := """
     import collection.JavaConversions._
@@ -66,7 +66,7 @@ Revolver.settings
 
 assemblySettings
 
-jarName in assembly := "location-provider.jar"
+jarName in assembly := "monopoly-dice.jar"
 
 dockerSettings
 

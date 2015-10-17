@@ -1,7 +1,6 @@
 package com.haw.monopoly.web
 
 import com.haw.monopoly.core.{Location, LocationFixtures, LocationRepository}
-import com.mintbeans.geo.core.LocationRepository
 import org.bson.types.ObjectId
 import org.json4s.jackson.JsonMethods._
 import org.json4s.{DefaultFormats, Formats, _}
@@ -37,7 +36,7 @@ class LocationControllerSpec extends ScalatraSuite with FlatSpecLike with MockFa
     val limit = fixture.size
     (repository.all _).expects(Some(limit)).returning(fixture)
 
-    get("/locations", ("limit", limit.toString) ) {
+    get("/locations", ("limit", limit.toString)) {
       status should equal(200)
 
       val response = parse(body)
@@ -138,7 +137,7 @@ class LocationControllerSpec extends ScalatraSuite with FlatSpecLike with MockFa
 
       val response = parse(body)
       val location = response.extract[Location]
-      location.id should be (id)
+      location.id should be(id)
     }
   }
 

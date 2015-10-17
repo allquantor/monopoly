@@ -8,7 +8,7 @@ import org.eclipse.jetty.servlet.ServletHolder
 import org.eclipse.jetty.webapp.WebAppContext
 import org.slf4j.LoggerFactory
 
-object LocationProvider extends App with WebModule with DataModule {
+object Dice extends App with WebModule with DataModule {
   val logger = LoggerFactory.getLogger(getClass)
   val config = ConfigFactory.load()
   val server = new Server(config.getInt("http.port"))
