@@ -11,5 +11,9 @@ trait WebModule {
 
   lazy val diceController = wire[DiceController]
 
+  lazy val decksController = wire[DecksController]
+
+  lazy val gameController = wire[GameController]
+
 
 }
