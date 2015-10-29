@@ -1,6 +1,6 @@
 package com.haw.monopoly.web
 
-import com.haw.monopoly.core.cards.CardRepository
+import com.haw.monopoly.core.dice.{CardRepository, CardType}
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra.ScalatraServlet
 import org.scalatra.json.JacksonJsonSupport
@@ -8,20 +8,37 @@ import org.scalatra.json.JacksonJsonSupport
 /**
  * Created by Ivan Morozov on 22/10/15.
  */
-class DecksController(cardRepository: CardRepository) extends ScalatraServlet with JacksonJsonSupport {
-  override protected implicit def jsonFormats: Formats = DefaultFormats
+class DecksController() extends ScalatraServlet with JacksonJsonSupport {
+
+  import CardRepository.All_Cards
+
+  import scala.util.Random._
 
 
   get("/:gameid/chance") {
     val id = params("gameid")
-
     // pick the right game
     // render random card
+    shuffle(
+      All_Cards.filter(_.cardType == CardType.Chance)
+    ).headOption.map { c =>
+      /*All_Cards = */ All_Cards - c
+      c
+    }.getOrElse( """{"message": "EmptyStack"}""")
+
+
   }
 
   get("/:gameid/community") {
-    scala.util.Random.
-      shuffle(CardRepository.Community_Cards).head
+    val id = params("gameid")
+
+    shuffle(
+      All_Cards.filter(_.cardType == CardType.Community)
+    ).headOption.map { c =>
+      /*All_Cards = */ All_Cards - c
+      c
+    }.getOrElse( """{"message": "EmptyStack"}""")
+
   }
 
 
@@ -29,6 +46,7 @@ class DecksController(cardRepository: CardRepository) extends ScalatraServlet wi
     contentType = formats("json")
   }
 
+  override protected implicit def jsonFormats: Formats = DefaultFormats
 }
 
 
