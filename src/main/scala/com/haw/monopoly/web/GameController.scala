@@ -15,6 +15,10 @@ class GameController extends ScalatraServlet with JacksonJsonSupport {
 
   }
 
+  put("/games/{:gameid}/players/{:playerid}") {
+
+  }
+
   get("/") {
 
   }
