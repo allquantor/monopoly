@@ -49,7 +49,8 @@ libraryDependencies ++= {
         "com.softwaremill.macwire"  %%  "runtime"                     % macwireVersion,
         "ch.qos.logback"            %   "logback-classic"             % logbackVersion,
         "org.scalamock"             %%  "scalamock-scalatest-support" % scalaMockVersion % "test",
-        "net.databinder.dispatch" %% "dispatch-core" % "0.11.2")
+        "net.databinder.dispatch" %% "dispatch-core" % "0.11.2",
+        "net.databinder.dispatch" %% "dispatch-json4s-native" % "0.11.2")
 }
 
 

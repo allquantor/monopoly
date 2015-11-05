@@ -1,49 +1,39 @@
 package com.haw.monopoly.gamelogic
 
 import com.haw.monopoly.GameConfigs
-import dispatch.Defaults._
+import com.haw.monopoly.core.game.Game
 import dispatch._
+import org.json4s._
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 
 /**
   * Created by Ivan Morozov on 05/11/15.
   */
 object GameLogic extends GameConfigs {
+  implicit val formats = org.json4s.DefaultFormats
+
+  type GameId = String
 
 
-  val extendRessource = {
-    (x: String, t: String) => s"$x/$t"
-  }
-
-
-  def registerGame(req: Req): Future[String] = {
-    Http(req).either.map {
-      case Right(response) => response.getResponseBody
-      case Left(e: Throwable) => ""
+  def registerGame(implicit req: Req): Future[Game] = {
+    // todo: add post here
+    Http(req./("dice") OK as.json4s.Json).map { json =>
+      json.extract[Game]
     }
   }
 
-
-  def parseGameId(json: String): String = {
-    //throw new NotImplementedError("implement this")
-    "dummy"
+  def registerPlayer(game: Game)(implicit req: Req, playerUri: OurPlayerLink): Future[String] = {
+    Http(
+      req.PUT
+        ./("game")./(game.number)
+        ./("player")./(ourId)
+        .addQueryParameter("Playername", "BESTENAME")
+        .addQueryParameter("Playeruri", playerUri) OK as.String
+    )
   }
 
 
-  def registerPlayer(playerName: String, playerUri: String, gameId: String) = {
-
-    val newhost = extendRessource(extendRessource(ourHost, gameId), ourId)
-
-    val req = host(newhost, ourPort).PUT.addQueryParameter("playername", playerName).
-      addQueryParameter("playeruri", playerUri)
-
-    val res = Http(req).either.map {
-      case Right(response) => response
-      case Left(e: Throwable) => throw e
-    }
-
-  }
 
 }
