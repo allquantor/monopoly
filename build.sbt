@@ -63,7 +63,7 @@ libraryDependencies ++= {
 
 
 
-mainClass := Some("com.haw.monopoly.Client")
+mainClass := Some("com.haw.monopoly.Server")
 
 initialCommands in console :=
   """

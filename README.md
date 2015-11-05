@@ -9,4 +9,8 @@ To start with HAPROXY:
 
 Use:
 	http://DOCKER_IP:8080/dice
+	
+	
+	 
+	
 

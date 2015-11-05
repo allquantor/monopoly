@@ -13,7 +13,7 @@ class DiceController() extends ScalatraServlet with JacksonJsonSupport {
   override protected implicit def jsonFormats: Formats = DefaultFormats //+ Serializers.objectId
 
   get("/") {
-    status_=(200)
+    //println("ICH BIN HIER!!!")
     Dice(scala.util.Random.nextInt(6) + 1)
   }
 

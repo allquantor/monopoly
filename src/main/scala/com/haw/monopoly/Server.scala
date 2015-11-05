@@ -7,7 +7,7 @@ import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.ServletHolder
 import org.eclipse.jetty.webapp.WebAppContext
 
-object Client extends App with WebModule with MonoLogger {
+object Server extends App with WebModule with MonoLogger {
 
 
   val config = ConfigFactory.load()
@@ -24,4 +24,5 @@ object Client extends App with WebModule with MonoLogger {
   server.start
   log.info("Server started.")
   server.join
+
 }
