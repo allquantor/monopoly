@@ -3,24 +3,35 @@ package com.haw.monopoly
 import com.haw.monopoly.data.DataModule
 import com.haw.monopoly.web.WebModule
 import com.typesafe.config.ConfigFactory
-import org.eclipse.jetty.server.Server
-import org.eclipse.jetty.servlet.ServletHolder
-import org.eclipse.jetty.webapp.WebAppContext
 import org.slf4j.LoggerFactory
+
+import scalaj.http._
+import scalaj.http.HttpConstants._
+
+
+
+
+
 
 object Client extends App with WebModule with DataModule {
   val logger = LoggerFactory.getLogger(getClass)
   val config = ConfigFactory.load()
-  val server = new Server(config.getInt("http.port"))
-  val webCtx = new WebAppContext()
-  webCtx.setContextPath(config.getString("http.path"))
-  webCtx.setResourceBase("/WEB-INF")
 
-  webCtx.addServlet(new ServletHolder(gameController), "/game/*")
+  //val url =  config.getString("http.url")
+  //val port = config.getInt("http.port")
+
+  //val _url = s"$url:$port"
+
+  val _url = "http://localhost:80"
 
 
-  server.setHandler(webCtx)
-  server.start
-  logger.info("Server started.")
-  server.join
+   val request: HttpRequest = MyHttp(_url)
+
+
+
+
+  println(Http("http://www.google.de").param("q", "monkeys").asString)
+
+
+
 }

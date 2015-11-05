@@ -6,7 +6,7 @@ import sbtdocker.mutable.Dockerfile
 import sbtdocker.ImageName
 
 
-name := """monopoly"""
+name := """monopolyclient"""
 
 organization := "com.haw"
 
@@ -50,8 +50,8 @@ libraryDependencies ++= {
         "com.softwaremill.macwire"  %%  "macros"                      % macwireVersion,
         "com.softwaremill.macwire"  %%  "runtime"                     % macwireVersion,
         "ch.qos.logback"            %   "logback-classic"             % logbackVersion,
-        "org.scalamock"             %%  "scalamock-scalatest-support" % scalaMockVersion % "test"
-    )
+        "org.scalamock"             %%  "scalamock-scalatest-support" % scalaMockVersion % "test",
+        "org.scalaj" %% "scalaj-http" % "1.1.6")
 }
 
 
@@ -66,7 +66,7 @@ Revolver.settings
 
 assemblySettings
 
-jarName in assembly := "monopoly-dice.jar"
+jarName in assembly := "client-monopolyclient.jar"
 
 dockerSettings
 
