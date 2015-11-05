@@ -32,9 +32,7 @@ object Client extends App with WebModule with DataModule with GameConfigs {
 
   override val config: Config = null
 
-  val game = registerGame flatMap registerPlayer
-
-
+  val playerRegistration = registerGame flatMap registerPlayer
 
 
 
