@@ -1,9 +1,7 @@
-import AssemblyKeys._
-import DockerKeys._
-import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
-import com.typesafe.sbt.packager.docker.DockerPlugin
-import sbtdocker.mutable.Dockerfile
+import sbtassembly.Plugin.AssemblyKeys._
 import sbtdocker.ImageName
+import sbtdocker.Plugin.DockerKeys._
+import sbtdocker.mutable.Dockerfile
 
 
 name := """monopolyclient"""
@@ -51,7 +49,7 @@ libraryDependencies ++= {
         "com.softwaremill.macwire"  %%  "runtime"                     % macwireVersion,
         "ch.qos.logback"            %   "logback-classic"             % logbackVersion,
         "org.scalamock"             %%  "scalamock-scalatest-support" % scalaMockVersion % "test",
-        "org.scalaj" %% "scalaj-http" % "1.1.6")
+        "net.databinder.dispatch" %% "dispatch-core" % "0.11.2")
 }
 
 
