@@ -50,7 +50,8 @@ libraryDependencies ++= {
         "com.softwaremill.macwire"  %%  "macros"                      % macwireVersion,
         "com.softwaremill.macwire"  %%  "runtime"                     % macwireVersion,
         "ch.qos.logback"            %   "logback-classic"             % logbackVersion,
-        "org.scalamock"             %%  "scalamock-scalatest-support" % scalaMockVersion % "test"
+        "org.scalamock"             %%  "scalamock-scalatest-support" % scalaMockVersion % "test",
+        "org.json4s" %% "json4s-jackson" % "{latestVersion}"
     )
 }
 

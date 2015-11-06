@@ -9,7 +9,7 @@ trait WebModule {
 
   lazy val locationController = wire[LocationController]
 
-  lazy val gameController = wire[GameController]
+  lazy val gameController = wire[BoardsController]
 
 
 }

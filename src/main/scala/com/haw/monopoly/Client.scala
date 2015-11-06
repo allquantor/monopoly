@@ -16,7 +16,7 @@ object Client extends App with WebModule with DataModule {
   webCtx.setContextPath(config.getString("http.path"))
   webCtx.setResourceBase("/WEB-INF")
 
-  webCtx.addServlet(new ServletHolder(gameController), "/game/*")
+  webCtx.addServlet(new ServletHolder(gameController), "/boards/*")
 
 
   server.setHandler(webCtx)
