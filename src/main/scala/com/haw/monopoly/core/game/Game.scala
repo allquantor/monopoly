@@ -6,6 +6,6 @@ import org.bson.types.ObjectId
 /**
  * Created by Ivan Morozov on 24/10/15.
  */
-case class Game(number:String)
+case class  Game(number:String)
 
 

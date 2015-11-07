@@ -18,8 +18,8 @@ object GameLogic extends GameConfigs {
 
 
   def registerGame(implicit req: Req): Future[Game] = {
-    // todo: add post here
-    Http(req./("dice") OK as.json4s.Json).map { json =>
+
+    Http(req.POST./("game") OK as.json4s.Json).map { json =>
       json.extract[Game]
     }
   }

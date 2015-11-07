@@ -13,6 +13,8 @@ import scala.concurrent.duration._
 
 
 trait GameConfigs {
+
+
   val ourHost = "localhost"
   val ourPort = 8080
   val ourId = "player1"
@@ -32,7 +34,10 @@ object Client extends App with WebModule with DataModule with GameConfigs {
 
   override val config: Config = null
 
+
   val playerRegistration = registerGame flatMap registerPlayer
+
+
 
 
 
