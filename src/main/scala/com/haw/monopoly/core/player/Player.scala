@@ -1,8 +1,8 @@
 package com.haw.monopoly.core.player
 
-import org.bson.types.ObjectId
-
 /**
- * Created by Ivan Morozov on 24/10/15.
- */
-case class Player(id: ObjectId, name: String, rmi: String, ready: Boolean)
+  * Created by Ivan Morozov on 24/10/15.
+  */
+case class Player(id: String, place: Place, position: Int)
+
+case class Place(id: String, name: String)

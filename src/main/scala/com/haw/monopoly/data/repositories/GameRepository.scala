@@ -1,7 +1,7 @@
-package com.haw.monopoly.core.game
+package com.haw.monopoly.data.repositories
 
 import com.haw.monopoly.core.Location
-import com.haw.monopoly.core.game.MutexStatusCodes.MutexStatus
+import com.haw.monopoly.data.repositories.MutexStatusCodes.MutexStatus
 
 /**
   * Created by Ivan Morozov on 24/10/15.

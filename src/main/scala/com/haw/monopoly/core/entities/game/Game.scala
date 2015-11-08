@@ -1,4 +1,4 @@
-package com.haw.monopoly.core.game
+package com.haw.monopoly.core.entities.game
 
 import com.haw.monopoly.core.player.Player
 import org.bson.types.ObjectId

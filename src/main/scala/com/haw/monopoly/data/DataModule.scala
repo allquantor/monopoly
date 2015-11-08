@@ -1,6 +1,7 @@
 package com.haw.monopoly.data
 
 import com.haw.monopoly.core.LocationRepository
+import com.haw.monopoly.data.repositories.BoardRepository
 import com.mongodb.casbah.MongoClient
 import com.softwaremill.macwire.MacwireMacros._
 import com.typesafe.config.Config
@@ -22,7 +23,12 @@ trait DataModule {
 
   lazy val db = mongo(config.getString("mongo.db"))
 
-  lazy val locationCollection = db(config.getString("mongo.collections.locations"))
-  lazy val locationRepository: LocationRepository = wire[MongoLocationRepository]
+
+  lazy val boardsCollection = db(config.getString("mongo.collections.boards"))
+  //lazy val locationCollection = db(config.getString("mongo.collections.locations"))
+
+  //lazy val locationRepository: LocationRepository = wire[MongoLocationRepository]
+  lazy val boardsRepository: BoardRepository  = wire[MongoBoardRepository]
+
 
 }

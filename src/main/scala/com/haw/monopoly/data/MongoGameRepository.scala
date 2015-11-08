@@ -1,8 +1,9 @@
 package com.haw.monopoly.data
 
 import com.haw.monopoly.core.Location
-import com.haw.monopoly.core.game.GameRepository
-import com.haw.monopoly.core.game.MutexStatusCodes.MutexStatus
+import com.haw.monopoly.data.repositories.{MutexStatusCodes, GameRepository}
+import MutexStatusCodes.MutexStatus
+import com.haw.monopoly.data.repositories.GameRepository
 import com.mongodb.casbah.MongoCollection
 import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.casbah.commons.ValidBSONType.BSONObject
@@ -24,7 +25,6 @@ class MongoGameRepository(collectionGames: MongoCollection) extends GameReposito
   override def putMutexForGame(id: String, playerId: String): Option[MutexStatus] = {
 
     val gameObj = MongoDBObject("gameId" -> id)
-    val gamePlayerObj = MongoDBObject("gameId" -> id, )
 
     collectionGames.find(gameObj).map { found =>
       collectionGames.find()

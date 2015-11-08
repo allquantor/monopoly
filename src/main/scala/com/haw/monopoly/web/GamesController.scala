@@ -1,7 +1,8 @@
 package com.haw.monopoly.web
 
-import com.haw.monopoly.core.game.GameRepository
-import com.haw.monopoly.core.game.MutexStatusCodes._
+import com.haw.monopoly.data.repositories.{MutexStatusCodes, GameRepository}
+import MutexStatusCodes._
+import com.haw.monopoly.data.repositories.GameRepository
 import org.json4s.Formats
 import org.scalatra.ScalatraServlet
 import org.scalatra.json.JacksonJsonSupport
