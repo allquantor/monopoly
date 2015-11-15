@@ -1,12 +1,10 @@
 package com.haw.monopoly.data
 
 import com.haw.monopoly.core.Location
-import com.haw.monopoly.data.repositories.{MutexStatusCodes, GameRepository}
-import MutexStatusCodes.MutexStatus
-import com.haw.monopoly.data.repositories.GameRepository
+import com.haw.monopoly.data.repositories.{GameRepository, MutexStatusCodes}
+import com.haw.monopoly.data.repositories.MutexStatusCodes.MutexStatus
 import com.mongodb.casbah.MongoCollection
 import com.mongodb.casbah.commons.MongoDBObject
-import com.mongodb.casbah.commons.ValidBSONType.BSONObject
 import org.bson.types.ObjectId
 
 /**
@@ -21,16 +19,28 @@ class MongoGameRepository(collectionGames: MongoCollection) extends GameReposito
 
   override def byNameFragment(name: String, limit: Option[Int]): Seq[Location] = ???
 
+  /**
+    * Specification for the Game-Mutex-Object
+    * Mutex => MongoDBObject(gameId -> id, playerId -> id)
+    *
+    * @param id
+    * @param playerId
+    * @return
+    */
 
-  override def putMutexForGame(id: String, playerId: String): Option[MutexStatus] = {
+  override def setMutexForGame(id: String, playerId: String): MutexStatus = {
 
-    val gameObj = MongoDBObject("gameId" -> id)
+    val gameObj = MongoDBObject("gameId" -> id, "playerId" -> "*".r)
 
     collectionGames.find(gameObj).map { found =>
-      collectionGames.find()
-      found
+      found.get("playerId").asInstanceOf[String] == playerId match {
+        case true => MutexStatusCodes.AlreadyHolding
+        case false => MutexStatusCodes.AquiredByAnother
+      }
+    }.toList.headOption.getOrElse {
+      collectionGames.save(MongoDBObject("gameId" -> id, "playerId" -> playerId))
+      MutexStatusCodes.AquiredSuccess
     }
-    //todo implement
-  null
+
   }
 }

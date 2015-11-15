@@ -1,9 +1,8 @@
 package com.haw.monopoly.web
 
-import com.haw.monopoly.data.repositories.{MutexStatusCodes, GameRepository}
-import MutexStatusCodes._
-import com.haw.monopoly.data.repositories.GameRepository
-import org.json4s.Formats
+import com.haw.monopoly.data.repositories.{GameRepository, MutexStatusCodes}
+import com.haw.monopoly.data.repositories.MutexStatusCodes._
+import org.json4s.{DefaultFormats, Formats}
 import org.scalatra.ScalatraServlet
 import org.scalatra.json.JacksonJsonSupport
 
@@ -11,7 +10,7 @@ import org.scalatra.json.JacksonJsonSupport
   * Created by Ivan Morozov on 06/11/15.
   */
 class GamesController(gameRepo: GameRepository) extends ScalatraServlet with JacksonJsonSupport {
-  override protected implicit def jsonFormats: Formats = ???
+  override protected implicit def jsonFormats: Formats = DefaultFormats
 
   put(":gameid/players/:playerid") {
 
@@ -27,7 +26,7 @@ class GamesController(gameRepo: GameRepository) extends ScalatraServlet with Jac
 
     val playerId = (parse(request.body) \ "playerid").asInstanceOf[String]
 
-    val statusCode = gameRepo.putMutexForGame(gameId, playerId).map(statusToCode)
+    val statusCode = gameRepo.setMutexForGame(gameId, playerId).map(statusToCode)
 
     status_=(statusCode.getOrElse(503))
 

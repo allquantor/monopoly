@@ -2,7 +2,6 @@ package com.haw.monopoly.web
 
 import com.haw.monopoly.core.entities.dice.Dice
 import com.haw.monopoly.core.services.BoardService
-
 import com.haw.monopoly.data.repositories.BoardRepository
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra.ScalatraServlet
@@ -26,14 +25,11 @@ class BoardsController(boardRepository: BoardRepository) extends ScalatraServlet
     val dice2 = (reqBodyJson \ "roll2").extract[Dice]
 
 
-    BoardService.getCurrentBoard(gameId,boardRepository).map { board =>
-      BoardService.changeBoardState(board,dice1,dice2,boardRepository)
+    val changedBoard = BoardService.getCurrentBoard(gameId, boardRepository).map { board =>
+      BoardService.changeBoardState(board, dice1, dice2, boardRepository, playerId)
     }.getOrElse(throw new Exception("Something went wrong here..."))
 
-
-
-    //todo: render some logic results
-
+    changedBoard
 
   }
 

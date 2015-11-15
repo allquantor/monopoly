@@ -17,13 +17,13 @@ trait GameRepository {
   def byTextPhrase(phrase: String, limit: Option[Int] = None): Seq[Location]
 
 
-  def putMutexForGame(id: String, playerId: String): Option[MutexStatus]
+  def setMutexForGame(id: String, playerId: String): Option[MutexStatus]
 
 
 }
 
 object MutexStatusCodes extends Enumeration {
-  // todo to enum
+
   type MutexStatus = Value
   val AlreadyHolding, AquiredSuccess, AquiredByAnother = Value
 

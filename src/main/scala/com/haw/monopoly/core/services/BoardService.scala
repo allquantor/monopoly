@@ -11,14 +11,16 @@ import com.haw.monopoly.data.repositories.BoardRepository
 object BoardService {
 
 
-  def changeBoardState(board: Board, dice1: Dice, dice2: Dice, repo: BoardRepository): Board = {
+  def changeBoardState(board: Board, dice1: Dice, dice2: Dice, repo: BoardRepository, playerId: String): Board = {
 
-    val b = repo.create(board)
-    val _b = repo.getById(board.id)
-    require(b == _b)
+    val changedPlayer = board.player.find(_.id == playerId).map { player =>
+      player.copy(id = playerId,
+        place = player.place.copy(player.place.id,
+          "JUST SUCCESSFULLY MOVED STREET")
+      )
+    }.getOrElse(throw new Exception("No player was found"))
 
-    // todo the logic
-    board
+    board.copy(player = (board.player.filter(_.id != playerId) + changedPlayer))
   }
 
 
@@ -27,8 +29,7 @@ object BoardService {
   }
 
   def createBoard(gameId: String, player: Set[Player], repo: BoardRepository): Option[Board] = {
-    val neuerBoard = Board(gameId, player)
-    repo.create(neuerBoard)
+    repo.create(Board(gameId, player))
   }
 
 }
