@@ -6,7 +6,7 @@ import sbtdocker.mutable.Dockerfile
 import sbtdocker.ImageName
 
 
-name := """monopoly"""
+name := """monopoly-a2"""
 
 organization := "com.haw"
 
@@ -53,12 +53,13 @@ libraryDependencies ++= {
         "org.scalamock"             %%  "scalamock-scalatest-support" % scalaMockVersion % "test",
         "org.json4s" %% "json4s-jackson" % "{latestVersion}",
         "net.databinder.dispatch" %% "dispatch-core" % "0.11.2",
-        "net.databinder.dispatch" %% "dispatch-json4s-native" % "0.11.2")
+        "net.databinder.dispatch" %% "dispatch-json4s-native" % "0.11.2",
+        "com.fasterxml.jackson.core" % "jackson-databind" % "2.4.0")
 }
 
 
 
-mainClass := Some("com.haw.monopoly.Dice")
+mainClass := Some("com.haw.monopoly.OurServer")
 
 initialCommands in console := """
     import collection.JavaConversions._
@@ -68,7 +69,7 @@ Revolver.settings
 
 assemblySettings
 
-jarName in assembly := "monopoly-dice.jar"
+jarName in assembly := "monopoly-a2.jar"
 
 dockerSettings
 

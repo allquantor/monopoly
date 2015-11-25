@@ -1,24 +1,31 @@
 package com.haw.monopoly.data.repositories
 
 import com.haw.monopoly.core.Location
+import com.haw.monopoly.core.entities.game.Game
+import com.haw.monopoly.core.player.PlayerBoards
 import com.haw.monopoly.data.repositories.MutexStatusCodes.MutexStatus
 
 /**
   * Created by Ivan Morozov on 24/10/15.
   */
 trait GameRepository {
+  def checkMutexForPlayer(gameId: String, playerId: String): Option[MutexStatus]
 
-  def all(limit: Option[Int] = None): Seq[Location]
+  def releaseMutexFor(gameId: String, playerId: String): Option[Boolean]
 
-  def byId(id: org.bson.types.ObjectId): Option[Location]
-
-  def byNameFragment(name: String, limit: Option[Int] = None): Seq[Location]
-
-  def byTextPhrase(phrase: String, limit: Option[Int] = None): Seq[Location]
-
+  def deleteMutexForGame(gameId: String): Option[Boolean]
 
   def setMutexForGame(id: String, playerId: String): Option[MutexStatus]
 
+  def getById(id:String):Option[Game]
+
+  def checkMutexForGame(id:String):Option[String]
+
+  def create(id:String):Option[Game]
+
+  def create(game:Game):Option[Game]
+
+  def delete(id:String):Option[Boolean]
 
 }
 

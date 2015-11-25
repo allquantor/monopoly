@@ -1,6 +1,9 @@
 package com.haw.monopoly
 
-import com.haw.monopoly.core.LocationRepository
+
+import java.util.Properties
+
+import com.haw.monopoly.core.services.YellowPagesService
 import com.haw.monopoly.data.DataModule
 import com.haw.monopoly.web.WebModule
 import com.typesafe.config.ConfigFactory
@@ -8,8 +11,11 @@ import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.ServletHolder
 import org.eclipse.jetty.webapp.WebAppContext
 import org.slf4j.LoggerFactory
+import dispatch._, Defaults._
 
-object OurServer extends App with WebModule with DataModule {
+
+object OurServer extends App with DataModule with WebModule  {
+
   val logger = LoggerFactory.getLogger(getClass)
   val config = ConfigFactory.load()
   val server = new Server(config.getInt("http.port"))
@@ -17,13 +23,20 @@ object OurServer extends App with WebModule with DataModule {
   webCtx.setContextPath(config.getString("http.path"))
   webCtx.setResourceBase("/WEB-INF")
 
-  webCtx.addServlet(new ServletHolder(boardsController), "/boards/*")
 
+
+  webCtx.addServlet(new ServletHolder(boardsController), "/boards/*")
+  webCtx.addServlet(new ServletHolder(gameController), "/games/*")
 
   server.setHandler(webCtx)
   server.start
+
   logger.info("OurServer started.")
+
+  YellowPagesService.registerOurService
+
   server.join
 
-  override def locationRepository: LocationRepository = ???
+
+
 }
