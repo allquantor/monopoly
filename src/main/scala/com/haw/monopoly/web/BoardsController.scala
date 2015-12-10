@@ -14,6 +14,24 @@ class BoardsController(boardRepository: BoardRepository, gameRepository: GameRep
   override protected implicit def jsonFormats: Formats = DefaultFormats
 
 
+  put("/:gameid") {
+
+    val gameId = params("gameid")
+
+    BoardService.
+      createBoard(gameId, Set(), boardRepository).
+      getOrElse(status_=(404))
+  }
+
+  put("/:gameid/players/:playerid") {
+    val gameId = params("gameid")
+    val playerId = params("playerid")
+
+    GameService.setPlayerReady(gameId,playerId,gameRepository,boardRepository)
+      .getOrElse(status_=(404))
+  }
+
+
   post("/:gameid/players/:playerid/roll") {
 
     val gameId = params("gameid")
