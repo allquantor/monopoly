@@ -121,6 +121,7 @@ trait SalatContext {
   object EventTransformer extends CustomTransformer[Event, DBObject] {
     override def deserialize(b: DBObject): Event = {
       Event(
+        b.get("id").asInstanceOf[String],
         b.get("_type").asInstanceOf[String],
         b.get("name").asInstanceOf[String],
         b.get("uri").asInstanceOf[String],
@@ -132,6 +133,7 @@ trait SalatContext {
 
     override def serialize(a: Event): DBObject = {
       MongoDBObject(
+        "id" -> a.id,
         "_type" -> a._type,
         "name" -> a.name,
         "uri" -> a.uri,

@@ -15,4 +15,6 @@ package object collections {
 
   case class PlayerCollection(collection: MongoCollection)
 
+  case class EventCollection(collection: MongoCollection)
+
 }
