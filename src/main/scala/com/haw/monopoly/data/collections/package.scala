@@ -13,4 +13,6 @@ package object collections {
 
   case class MutexCollection(collection: MongoCollection)
 
+  case class PlayerCollection(collection: MongoCollection)
+
 }

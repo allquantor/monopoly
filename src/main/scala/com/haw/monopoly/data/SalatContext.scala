@@ -1,9 +1,9 @@
 package com.haw.monopoly.data
 
-import com.haw.monopoly.core.Point
 import com.haw.monopoly.core.entities.board.Board
 import com.haw.monopoly.core.entities.game.Game
-import com.haw.monopoly.core.player.{Place, PlayerBoards, PlayerGames}
+import com.haw.monopoly.core.player.{Place, PlayerBoards, PlayerGames, PlayerPosition}
+import com.haw.monopoly.core.{Event, Point}
 import com.mongodb.DBObject
 import com.mongodb.casbah.commons.Imports._
 import com.novus.salat._
@@ -118,6 +118,46 @@ trait SalatContext {
     }
   }
 
+  object EventTransformer extends CustomTransformer[Event, DBObject] {
+    override def deserialize(b: DBObject): Event = {
+      Event(
+        b.get("_type").asInstanceOf[String],
+        b.get("name").asInstanceOf[String],
+        b.get("uri").asInstanceOf[String],
+        PlaceTransformer.deserialize(b.get("place").asInstanceOf[DBObject]),
+        b.get("position").asInstanceOf[Int],
+        b.get("ready").asInstanceOf[Boolean]
+      )
+    }
+
+    override def serialize(a: Event): DBObject = {
+      MongoDBObject(
+        "_type" -> a._type,
+        "name" -> a.name,
+        "uri" -> a.uri,
+        "place" -> PlaceTransformer.serialize(a.place),
+        "position" -> a.position,
+        "ready" -> a.ready
+      )
+    }
+  }
+
+  object PlayerPositionTransformer extends CustomTransformer[PlayerPosition, DBObject] {
+    override def deserialize(b: DBObject): PlayerPosition = {
+      PlayerPosition(
+        b.get("id").asInstanceOf[String],
+        EventTransformer.deserialize(b.get("event").asInstanceOf[DBObject])
+      )
+    }
+
+    override def serialize(a: PlayerPosition): DBObject = {
+      MongoDBObject(
+        "id" -> a.playerId,
+        "event" -> EventTransformer.serialize(a.event)
+      )
+    }
+  }
+
 
   implicit val salatContext = new Context() {
     override val name = "custom_salat_context"
@@ -129,6 +169,9 @@ trait SalatContext {
     registerCustomTransformer(PlaceTransformer)
     registerCustomTransformer(BoardTransformer)
     registerCustomTransformer(GameTransformer)
+    registerCustomTransformer(EventTransformer)
+    registerCustomTransformer(PlayerPositionTransformer)
+
 
     // registerGlobalKeyOverride(remapThis = "id", toThisInstead = "_id")
   }
