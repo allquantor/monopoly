@@ -17,4 +17,6 @@ package object collections {
 
   case class EventCollection(collection: MongoCollection)
 
+  case class SubscriptionCollection(collection: MongoCollection)
+
 }

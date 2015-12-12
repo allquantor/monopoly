@@ -11,6 +11,12 @@ import com.novus.salat._
   */
 class MongoEventRepository(eventCollection:EventCollection) extends EventRepository with SalatContext{
   override def create(e: Event): Unit = {
-    eventCollection.collection.save(grater[Event].asDBObject(e))
+    eventCollection.collection.save( grater[Event].asDBObject(e) )
   }
+
+  override def delete(): Unit = ???
+
+  override def get(): Unit = ???
+
+  override def findToId(id: String): Option[Event] = ???
 }
