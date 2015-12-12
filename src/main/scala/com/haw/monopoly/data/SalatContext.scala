@@ -3,7 +3,7 @@ package com.haw.monopoly.data
 import com.haw.monopoly.core.entities.board.Board
 import com.haw.monopoly.core.entities.game.Game
 import com.haw.monopoly.core.player.{Place, PlayerBoards, PlayerGames, PlayerPosition}
-import com.haw.monopoly.core.{Event, Point}
+import com.haw.monopoly.core.{Subscription, Event, Point}
 import com.mongodb.DBObject
 import com.mongodb.casbah.commons.Imports._
 import com.novus.salat._
@@ -160,6 +160,29 @@ trait SalatContext {
     }
   }
 
+  object SubscriptionTransformer extends CustomTransformer[Subscription,DBObject] {
+
+    override def deserialize(b: DBObject): Subscription = {
+      Subscription (
+        b.get("id").asInstanceOf[String],
+        b.get("gameid").asInstanceOf[String],
+        b.get("uri").asInstanceOf[String],
+        b.get("callbackuri").asInstanceOf[String],
+        grater[Event].asObject(b.get("event").asInstanceOf[DBObject])
+      )
+    }
+
+    override def serialize(a: Subscription): DBObject = {
+      MongoDBObject(
+        "id" -> a.id,
+        "gameid" -> a.gameid,
+        "uri" ->  a.uri,
+        "callbackuri" -> a.callbackuri,
+        "event" -> grater[Event].asDBObject(a.event)
+      )
+    }
+  }
+
 
   implicit val salatContext = new Context() {
     override val name = "custom_salat_context"
@@ -173,6 +196,7 @@ trait SalatContext {
     registerCustomTransformer(GameTransformer)
     registerCustomTransformer(EventTransformer)
     registerCustomTransformer(PlayerPositionTransformer)
+    registerCustomTransformer(SubscriptionTransformer)
 
 
     // registerGlobalKeyOverride(remapThis = "id", toThisInstead = "_id")
