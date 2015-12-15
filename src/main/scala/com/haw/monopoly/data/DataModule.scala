@@ -31,12 +31,16 @@ trait DataModule {
   lazy val playerCollection:PlayerCollection = PlayerCollection(db(config.getString("mongo.collections.player")))
   lazy val eventCollection:EventCollection = EventCollection(db(config.getString("mongo.collections.event")))
   lazy val subscriptionCollection:SubscriptionCollection = SubscriptionCollection(db(config.getString("mongo.collections.subscription")))
+  lazy val brokerCollection:BrokerCollection = BrokerCollection(db(config.getString("mongo.collections.broker")))
+  lazy val estateCollection:EstateCollection = EstateCollection(db(config.getString("mongo.collections.estate")))
 
 
   lazy val boardsRepository: BoardRepository  = wire[MongoBoardRepository]
   lazy val gameRepository: GameRepository  = wire[MongoGameRepository]
   lazy val playerRepository : PlayersPrivateRepository = wire[MongoPlayersPrivateRepository]
   lazy val eventRepository : EventRepository = wire[MongoEventRepository]
+  lazy val brokerRespository : BrokersRepository = wire[MongoBrokerRepository]
+  lazy val estateRepository : EstateRepository = wire[MongoEstateRepository]
 
 
 }

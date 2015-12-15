@@ -74,7 +74,7 @@ class MongoGameRepository(collectionGames: GamesCollection, collectionMutex: Mut
 
   override def create(id: String): Option[Game] = {
 
-    val newgame = Game(id,Set())
+    val newgame = Game(id,"",Set(),null)
     val newgamedbobject = grater[Game].asDBObject(newgame)
 
     logger.info(s"Trying to create game: ${newgamedbobject}")

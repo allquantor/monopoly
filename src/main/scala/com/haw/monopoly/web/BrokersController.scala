@@ -14,13 +14,25 @@ class BrokersController(brokersRepository: BrokersRepository,estateRepository: E
   override protected implicit def jsonFormats: Formats = DefaultFormats
 
   put("/:gameid") {
-    val game = ((parse(request.body)) \ "game").extract[Game]
-    brokersRepository.create( game.gameid).getOrElse(status_=(404))
+    val game = ((parse(request.body))).extract[Game]
+    brokersRepository.create(game.gameid).getOrElse(status_=(404))
+    game
   }
 
   put("/:gameid/places/:placeid") {
-    val estate = ((parse(request.body)) \ "estate").extract[Estate]
-    val gameId = params("gameId")
+
+    val placeid = params("placeid")
+    val gameId = params("gameid")
+
+    val place = ((parse(request.body) \ "place" )).extract[String]
+    val owner = ((parse(request.body) \ "owner" )).extract[String]
+    val value = ((parse(request.body) \ "value" )).extract[Int]
+    val rent = ((parse(request.body) \ "rent" )).extract[Array[Int]]
+    val cost = ((parse(request.body) \ "cost" )).extract[Array[Int]]
+    val houses = ((parse(request.body) \ "houses" )).extract[Int]
+
+    val estate = Estate(placeid,place,owner,value,rent,cost,houses)
+
     estateRepository.create(estate,gameId).getOrElse(status_=(404))
   }
 
@@ -29,8 +41,7 @@ class BrokersController(brokersRepository: BrokersRepository,estateRepository: E
     val placeid = params("placeid")
     val playerid = params("playerid")
 
-    estateRepository.findById(gameid,placeid).map { estate =>
-
+    estateRepository.findByPlaceId(gameid,placeid).map { estate =>
       // was soll hier passieren
       // case 1  => Grundstück gehört bereits mir kann häuser drauf bauen
       // case 2 => Grundstück gehört jemanden anderen ich muss berechenen wieviel häuser er hat und miete an ihn zahlen
@@ -53,12 +64,9 @@ class BrokersController(brokersRepository: BrokersRepository,estateRepository: E
 
 
 
-
-
-
-
-
-
+  before() {
+    contentType = formats("json")
+  }
 
 
 }

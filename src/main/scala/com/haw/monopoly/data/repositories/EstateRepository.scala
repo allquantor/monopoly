@@ -10,7 +10,7 @@ trait EstateRepository {
 
   def updateEstate(id: String, gameid: String, playerid: String): Option[Estate]
 
-  def findById(gameid: String, placeid: String): Option[Estate]
+  def findByPlaceId(gameid: String, placeid: String): Option[Estate]
 
   def create(e:Estate,gameId:String):Option[Estate]
 

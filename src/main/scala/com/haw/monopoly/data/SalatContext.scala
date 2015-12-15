@@ -1,14 +1,16 @@
 package com.haw.monopoly.data
 
 import com.haw.monopoly.core.entities.board.Board
-import com.haw.monopoly.core.entities.game.Game
+import com.haw.monopoly.core.entities.game.{Components, Game}
 import com.haw.monopoly.core.player._
-import com.haw.monopoly.core.{Event, Point, Subscription}
+import com.haw.monopoly.core.{Estate, Event, Point, Subscription}
 import com.mongodb.DBObject
 import com.mongodb.casbah.commons.Imports._
 import com.novus.salat._
 import com.novus.salat.json._
 import com.novus.salat.transformers._
+
+
 
 
 trait SalatContext {
@@ -83,15 +85,18 @@ trait SalatContext {
     override def deserialize(b: DBObject): Game = {
       val id = b.get("gameid").asInstanceOf[String]
       val playerGames = b.get("player").asInstanceOf[Set[DBObject]].map(PlayerGameTransformer.deserialize)
-
-      Game(id, playerGames)
+      val components = ComponentsTransformer.deserialize(b.get("components").asInstanceOf[DBObject])
+      val uri = b.get("uri").asInstanceOf[String]
+      Game(id, uri, playerGames, components)
     }
 
     override def serialize(a: Game): DBObject = {
 
       MongoDBObject(
         "gameid" -> a.gameid,
-        "player" -> a.player.map(PlayerGameTransformer.serialize)
+        "uri" -> a.uri,
+        "player" -> a.players.map(PlayerGameTransformer.serialize),
+        "components" -> ComponentsTransformer.serialize(a.components)
       )
     }
   }
@@ -209,6 +214,68 @@ trait SalatContext {
 
   }
 
+  object ComponentsTransformer extends CustomTransformer[Components, DBObject] {
+    override def deserialize(b: DBObject): Components = {
+
+      Components(
+        b.get("game").asInstanceOf[String],
+        b.get("dice").asInstanceOf[String],
+        b.get("board").asInstanceOf[String],
+        b.get("bank").asInstanceOf[String],
+        b.get("broker").asInstanceOf[String],
+        b.get("decks").asInstanceOf[String],
+        b.get("events").asInstanceOf[String]
+      )
+    }
+
+    override def serialize(a: Components): DBObject = {
+      MongoDBObject(
+        "game" -> a.game,
+        "dice" -> a.dice,
+        "board" -> a.board,
+        "bank" -> a.bank,
+        "broker" -> a.broker,
+        "decks" -> a.decks,
+        "events" -> a.events
+      )
+    }
+  }
+
+
+  object EstateTransformer extends CustomTransformer[Estate, DBObject] {
+    import scala.collection.JavaConverters._
+
+    override def deserialize(b: DBObject): Estate = {
+
+      val rent = b.getAs[java.util.List[Int]]("rent").get.asScala.toArray
+      val cost =  b.getAs[java.util.List[Int]]("cost").get.asScala.toArray
+
+      Estate(
+        b.get("id").asInstanceOf[String],
+        b.get("place").asInstanceOf[String],
+        b.get("owner").asInstanceOf[String],
+        b.get("value").asInstanceOf[Int],
+        rent,
+        cost,
+        b.get("houses").asInstanceOf[Int]
+      )
+    }
+
+    override def serialize(a: Estate): DBObject = {
+      MongoDBObject(
+        "id" -> a.id,
+        "place" -> a.place,
+        "owner" -> a.owner,
+        "value" -> a.value,
+        "rent" -> a.rent,
+        "cost" -> a.cost,
+        "houses" -> a.houses
+      )
+    }
+
+
+  }
+
 
   implicit val salatContext = new Context() {
     override val name = "custom_salat_context"
@@ -224,6 +291,8 @@ trait SalatContext {
     registerCustomTransformer(PlayerPositionTransformer)
     registerCustomTransformer(SubscriptionTransformer)
     registerCustomTransformer(PlayerEventTransformer)
+    registerCustomTransformer(ComponentsTransformer)
+    registerCustomTransformer(EstateTransformer)
 
 
     // registerGlobalKeyOverride(remapThis = "id", toThisInstead = "_id")

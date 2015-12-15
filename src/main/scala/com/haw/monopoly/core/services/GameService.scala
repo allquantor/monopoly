@@ -13,7 +13,7 @@ object GameService {
 
   def isPlayerReady(gameId: String, playerId: String, gameRepo: GameRepository):Option[Boolean] = {
     gameRepo.getById(gameId).flatMap { game =>
-      game.player.find(_.id == playerId).map {_.ready}
+      game.players.find(_.id == playerId).map {_.ready}
     }
   }
 
@@ -36,13 +36,13 @@ object GameService {
     }
 
     Option(gameRepo.getById(gameId).flatMap { game =>
-      game.player.find(_.id == playerId).flatMap { p =>
+      game.players.find(_.id == playerId).flatMap { p =>
 
         _updateBoard(p)
 
         val updatedPlayer = p.copy(ready = true)
-        val newPlayerSet = (game.player - p) + updatedPlayer
-        val newUpdatedGame = game.copy(player = newPlayerSet)
+        val newPlayerSet = (game.players - p) + updatedPlayer
+        val newUpdatedGame = game.copy(players = newPlayerSet)
 
         gameRepo.delete(gameId)
         gameRepo.create(newUpdatedGame)
@@ -101,9 +101,9 @@ object GameService {
 
     gameRepository.getById(gameId).map { game =>
 
-      game.player.find(_.id == playerId).getOrElse {
-        val newPlayerSet = game.player + newPlayer
-        val newGameObject = game.copy(gameid = gameId, player = newPlayerSet)
+      game.players.find(_.id == playerId).getOrElse {
+        val newPlayerSet = game.players + newPlayer
+        val newGameObject = game.copy(gameid = gameId, players = newPlayerSet)
 
         gameRepository.delete(gameId).map { deleteResult =>
           gameRepository.create(newGameObject)

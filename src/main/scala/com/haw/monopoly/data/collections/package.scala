@@ -19,4 +19,8 @@ package object collections {
 
   case class SubscriptionCollection(collection: MongoCollection)
 
+  case class BrokerCollection(collection: MongoCollection)
+
+  case class EstateCollection(collection: MongoCollection)
+
 }
