@@ -24,7 +24,6 @@ object OurServer extends App with DataModule with WebModule {
 
   webCtx.addServlet(new ServletHolder(boardsController), "/boards/*")
   webCtx.addServlet(new ServletHolder(gameController), "/games/*")
-
   webCtx.addServlet(new ServletHolder(playerController), "/player/*")
 
   server.setHandler(webCtx)

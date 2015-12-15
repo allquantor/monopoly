@@ -23,7 +23,11 @@ class MongoPlayersPrivateRepository(playerCollection:PlayerCollection) extends P
     }.map { newposition =>
       playerCollection.collection.findAndRemove(MongoDBObject("id" -> playerId))
       playerCollection.collection.save(grater[PlayerPosition].asDBObject(newposition))
-      newposition
+      Some(newposition)
+    }.getOrElse {
+      val newposition = PlayerPosition(playerId,null)
+      playerCollection.collection.save(grater[PlayerPosition].asDBObject(newposition))
+      Some(newposition)
     }
   }
 

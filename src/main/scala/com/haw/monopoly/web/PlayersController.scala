@@ -11,9 +11,10 @@ import org.scalatra.json.JacksonJsonSupport
   * Created by Ivan Morozov on 10/12/15.
   */
 class PlayersController(playerRepo:PlayersPrivateRepository) extends ScalatraServlet with JacksonJsonSupport {
+
   override protected implicit def jsonFormats: Formats = DefaultFormats
 
-  val myOwnId = 1
+  val myOwnId = 999
 
   post("/turn") {
     playerRepo.setReady(myOwnId.toString,true).getOrElse(status_=(503))
@@ -29,6 +30,8 @@ class PlayersController(playerRepo:PlayersPrivateRepository) extends ScalatraSer
     val event = Event(_type,name,uri,place,position,ready)
 
     playerRepo.updateCurrentState(myOwnId.toString,event).getOrElse(status_=(503))
-
+  }
+  before() {
+    contentType = formats("json")
   }
 }
