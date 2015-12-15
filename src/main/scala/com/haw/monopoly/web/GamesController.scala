@@ -7,6 +7,9 @@ import org.json4s.{DefaultFormats, Formats}
 import org.scalatra.ScalatraServlet
 import org.scalatra.json.JacksonJsonSupport
 import org.slf4j.LoggerFactory
+import dispatch._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Failure, Success}
 
 /**
   * Created by Ivan Morozov on 06/11/15.
@@ -26,26 +29,14 @@ class GamesController(gameRepo: GameRepository,
     val gameId = (scala.util.Random.nextInt(100000) + 1).toString
     val result = gameRepo.create(gameId)
     logger.info(s"Game creation result ${result}")
+    val request = host("localhost",9999)
+
+    Http(request / "boards" / s"$gameId" PUT).onComplete {
+      case Success(r) => logger.info(s"We had an successful board creation to gameId:${gameId} and got Board ${r.toString}")
+      case Failure(r) => logger.info(s"We got an failure by board creation from game ${r.getMessage}")
+    }
     result
   }
-
-
-
-  put("/:gameid/players/:playerid") {
-
-    val gameId = params("gameid")
-    val playerId = params("playerid")
-    val name = params("name")
-    val uri = params("uri")
-
-    GameService.registerPlayerInGame(
-      gameId, playerId, name, uri, gameRepo
-    ).getOrElse {
-      status_=(404)
-    }
-  }
-
-
 
 
 
@@ -58,6 +49,28 @@ class GamesController(gameRepo: GameRepository,
     GameService.isPlayerReady(gameId, playerId, gameRepo).getOrElse {
       status_=(404)
     }
+  }
+
+  put("/:gameid/players/:playerid") {
+
+
+    val gameId = params("gameid")
+    val playerId = params("playerid")
+    val name = params("name")
+    val uri = params("uri")
+
+    GameService.registerPlayerInGame(
+      gameId, playerId, name, uri, gameRepo
+    ).getOrElse {
+      status_=(404)
+    }
+    val req = host("localhost", 9999)
+
+    Http(req / "boards" / s"$gameId" / "players" / s"$playerId" PUT).onComplete {
+      case Success(r) => logger.info(s"We had an successful Player set on board for playerid:${playerId} and got ${r.getResponseBody}")
+      case Failure(r) => logger.info(s"We got an failure by player settion ${r.getMessage}")
+    }
+
   }
 
 

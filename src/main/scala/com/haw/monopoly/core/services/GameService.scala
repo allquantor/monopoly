@@ -25,6 +25,7 @@ object GameService {
       val playerBoards = PlayerBoards(player.id, Place("0","Start"), 0)
 
       BoardService.getCurrentBoard(gameId,boardRepo).map { board =>
+        // our board can register a player only when the player already exists in games
         board.player.find(_.id == player.id).getOrElse {
           BoardService.addPlayerToBoard(gameId,playerBoards,boardRepo)
         }

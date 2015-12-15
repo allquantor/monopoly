@@ -27,6 +27,8 @@ class BoardsController(boardRepository: BoardRepository, gameRepository: GameRep
     val gameId = params("gameid")
     val playerId = params("playerid")
 
+
+    // our board can register a player only when the player already exists in games
     GameService.setPlayerReady(gameId,playerId,gameRepository,boardRepository)
       .getOrElse(status_=(404))
   }
