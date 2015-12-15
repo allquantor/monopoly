@@ -27,8 +27,14 @@ class PlayersController(playerRepo:PlayersPrivateRepository) extends ScalatraSer
     val uri = ((parse(request.body)) \ "uri").extract[String]
     val position = ((parse(request.body)) \ "position").extract[Int]
     val ready = ((parse(request.body)) \ "ready").extract[Boolean]
+
     val player = ((parse(request.body)) \ "place").extract[PlayerEvents]
    // val event = Event(id,_type,name,uri,player)
+
+    val place = ((parse(request.body)) \ "place").extract[Place]
+    //val event = Event("11111",_type,name,uri,place,position,ready)
+
+   // playerRepo.updateCurrentState(myOwnId.toString,event).getOrElse(status_=(503))
 
    // playerRepo.updateCurrentState(myOwnId.toString,event).getOrElse(status_=(503))
   }

@@ -8,7 +8,8 @@ import com.haw.monopoly.core.player.PlayerGames
   */
 
 // components = Name -> Id
-@JsonIgnoreProperties(Array("components"))
-case class Game(gameid: String, player: Set[PlayerGames])
+case class Game(gameid: String, uri:String, player: Set[PlayerGames],components:Components)
 
+
+case class Components(game:String,dice:String,board:String,bank:String,broker:String,decks:String,events:String)
 

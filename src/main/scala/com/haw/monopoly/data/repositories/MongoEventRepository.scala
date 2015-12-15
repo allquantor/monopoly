@@ -36,4 +36,5 @@ class MongoEventRepository(eventCollection:EventCollection,subscriptionCollectio
       grater[Event].asObject(document)
     }
   }
+
 }
