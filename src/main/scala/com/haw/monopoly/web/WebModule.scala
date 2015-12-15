@@ -14,5 +14,7 @@ trait WebModule extends DataModule {
 
   lazy val playerController = wire[PlayersController]
 
+  lazy val eventController = wire[EventsController]
+
 
 }

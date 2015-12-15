@@ -2,8 +2,8 @@ package com.haw.monopoly.data
 
 import com.haw.monopoly.core.entities.board.Board
 import com.haw.monopoly.core.entities.game.Game
-import com.haw.monopoly.core.player.{Place, PlayerBoards, PlayerGames, PlayerPosition}
-import com.haw.monopoly.core.{Subscription, Event, Point}
+import com.haw.monopoly.core.player._
+import com.haw.monopoly.core.{Event, Point, Subscription}
 import com.mongodb.DBObject
 import com.mongodb.casbah.commons.Imports._
 import com.novus.salat._
@@ -124,10 +124,9 @@ trait SalatContext {
         b.get("id").asInstanceOf[String],
         b.get("_type").asInstanceOf[String],
         b.get("name").asInstanceOf[String],
-        b.get("uri").asInstanceOf[String],
-        PlaceTransformer.deserialize(b.get("place").asInstanceOf[DBObject]),
-        b.get("position").asInstanceOf[Int],
-        b.get("ready").asInstanceOf[Boolean]
+        b.get("reason").asInstanceOf[String],
+        b.get("ressource").asInstanceOf[String],
+        PlayerEventTransformer.deserialize(b.get("player").asInstanceOf[DBObject])
       )
     }
 
@@ -136,10 +135,9 @@ trait SalatContext {
         "id" -> a.id,
         "_type" -> a._type,
         "name" -> a.name,
-        "uri" -> a.uri,
-        "place" -> PlaceTransformer.serialize(a.place),
-        "position" -> a.position,
-        "ready" -> a.ready
+        "reason" -> a.reason,
+        "ressource" -> a.resource,
+        "player" -> PlayerEventTransformer.serialize(a.player)
       )
     }
   }
@@ -160,10 +158,10 @@ trait SalatContext {
     }
   }
 
-  object SubscriptionTransformer extends CustomTransformer[Subscription,DBObject] {
+  object SubscriptionTransformer extends CustomTransformer[Subscription, DBObject] {
 
     override def deserialize(b: DBObject): Subscription = {
-      Subscription (
+      Subscription(
         b.get("id").asInstanceOf[String],
         b.get("gameid").asInstanceOf[String],
         b.get("uri").asInstanceOf[String],
@@ -176,11 +174,39 @@ trait SalatContext {
       MongoDBObject(
         "id" -> a.id,
         "gameid" -> a.gameid,
-        "uri" ->  a.uri,
+        "uri" -> a.uri,
         "callbackuri" -> a.callbackuri,
         "event" -> grater[Event].asDBObject(a.event)
       )
     }
+  }
+
+
+  object PlayerEventTransformer extends CustomTransformer[PlayerEvents, DBObject] {
+
+    override def deserialize(b: DBObject): PlayerEvents = {
+
+      val id = b.get("id").asInstanceOf[String]
+      val name = b.get("name").asInstanceOf[String]
+      val reason = b.get("reason").asInstanceOf[String]
+      val uri = b.get("resource").asInstanceOf[String]
+      val place = PlaceTransformer.deserialize(b.get("place").asInstanceOf[DBObject])
+      val position = b.get("position").asInstanceOf[Int]
+      val ready = b.get("ready").asInstanceOf[Boolean]
+      PlayerEvents(id, name, uri, place, position, ready)
+    }
+
+    override def serialize(a: PlayerEvents): DBObject = {
+      MongoDBObject(
+        "id" -> a.id,
+        "name" -> a.name,
+        "uri" -> a.uri,
+        "place" -> PlaceTransformer.serialize(a.place),
+        "position" -> a.position,
+        "ready" -> a.ready
+      )
+    }
+
   }
 
 
@@ -197,6 +223,7 @@ trait SalatContext {
     registerCustomTransformer(EventTransformer)
     registerCustomTransformer(PlayerPositionTransformer)
     registerCustomTransformer(SubscriptionTransformer)
+    registerCustomTransformer(PlayerEventTransformer)
 
 
     // registerGlobalKeyOverride(remapThis = "id", toThisInstead = "_id")

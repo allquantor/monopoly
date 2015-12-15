@@ -19,7 +19,7 @@ class MongoPlayersPrivateRepository(playerCollection:PlayerCollection) extends P
   override def setReady(playerId:String,status:Boolean): Option[PlayerPosition] = {
     playerCollection.collection.findOne(MongoDBObject("id" -> playerId)).map { document =>
       val currentPosition = grater[PlayerPosition].asObject(document)
-      currentPosition.copy(event = currentPosition.event.copy(ready = status))
+      currentPosition
     }.map { newposition =>
       playerCollection.collection.findAndRemove(MongoDBObject("id" -> playerId))
       playerCollection.collection.save(grater[PlayerPosition].asDBObject(newposition))

@@ -1,8 +1,7 @@
 package com.haw.monopoly.data
 
-import com.haw.monopoly.core.LocationRepository
 import com.haw.monopoly.data.collections._
-import com.haw.monopoly.data.repositories.{PlayersPrivateRepository, GameRepository, BoardRepository}
+import com.haw.monopoly.data.repositories._
 import com.mongodb.casbah.MongoClient
 import com.softwaremill.macwire.MacwireMacros._
 import com.typesafe.config.Config
@@ -30,11 +29,14 @@ trait DataModule {
   lazy val gameCollection:GamesCollection = GamesCollection(db(config.getString("mongo.collections.games")))
   lazy val gameMutexCollection:MutexCollection = MutexCollection(db(config.getString("mongo.collections.mutex")))
   lazy val playerCollection:PlayerCollection = PlayerCollection(db(config.getString("mongo.collections.player")))
+  lazy val eventCollection:EventCollection = EventCollection(db(config.getString("mongo.collections.event")))
+  lazy val subscriptionCollection:SubscriptionCollection = SubscriptionCollection(db(config.getString("mongo.collections.subscription")))
 
 
   lazy val boardsRepository: BoardRepository  = wire[MongoBoardRepository]
   lazy val gameRepository: GameRepository  = wire[MongoGameRepository]
   lazy val playerRepository : PlayersPrivateRepository = wire[MongoPlayersPrivateRepository]
+  lazy val eventRepository : EventRepository = wire[MongoEventRepository]
 
 
 }

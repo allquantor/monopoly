@@ -1,7 +1,7 @@
 package com.haw.monopoly.web
 
 import com.haw.monopoly.core.Event
-import com.haw.monopoly.core.player.Place
+import com.haw.monopoly.core.player.{PlayerEvents, Place}
 import com.haw.monopoly.data.repositories.PlayersPrivateRepository
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra.ScalatraServlet
@@ -21,15 +21,16 @@ class PlayersController(playerRepo:PlayersPrivateRepository) extends ScalatraSer
   }
 
   post("/event") {
+    val id = ((parse(request.body)) \ "id").extract[String]
     val _type = ((parse(request.body)) \ "type").extract[String]
     val name = ((parse(request.body)) \ "name").extract[String]
     val uri = ((parse(request.body)) \ "uri").extract[String]
     val position = ((parse(request.body)) \ "position").extract[Int]
     val ready = ((parse(request.body)) \ "ready").extract[Boolean]
-    val place = ((parse(request.body)) \ "place").extract[Place]
-    val event = Event(_type,name,uri,place,position,ready)
+    val player = ((parse(request.body)) \ "place").extract[PlayerEvents]
+   // val event = Event(id,_type,name,uri,player)
 
-    playerRepo.updateCurrentState(myOwnId.toString,event).getOrElse(status_=(503))
+   // playerRepo.updateCurrentState(myOwnId.toString,event).getOrElse(status_=(503))
   }
   before() {
     contentType = formats("json")
