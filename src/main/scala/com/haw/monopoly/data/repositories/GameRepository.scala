@@ -27,6 +27,8 @@ trait GameRepository {
 
   def delete(id:String):Option[Boolean]
 
+  def getAllGames: List[Game]
+
 }
 
 object MutexStatusCodes extends Enumeration {

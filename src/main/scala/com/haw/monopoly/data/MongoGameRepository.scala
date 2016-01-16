@@ -19,6 +19,8 @@ import scala.util.Try
   */
 class MongoGameRepository(collectionGames: GamesCollection, collectionMutex: MutexCollection) extends GameRepository with SalatContext {
 
+
+  val selfhost = "localhost:9999"
   val logger = LoggerFactory.getLogger(getClass)
 
   /**
@@ -74,7 +76,8 @@ class MongoGameRepository(collectionGames: GamesCollection, collectionMutex: Mut
 
   override def create(id: String): Option[Game] = {
 
-    val newgame = Game(id,"",Set(),null)
+    //todo dynamical host resolving
+    val newgame = Game(id,selfhost,Set(),null)
     val newgamedbobject = grater[Game].asDBObject(newgame)
 
     logger.info(s"Trying to create game: ${newgamedbobject}")
@@ -104,5 +107,9 @@ class MongoGameRepository(collectionGames: GamesCollection, collectionMutex: Mut
         case false => Option(MutexStatusCodes.AquiredByAnother)
       }
     }.toList.headOption.getOrElse(None)
+  }
+
+  override def getAllGames: List[Game] = {
+    collectionGames.collection.find().map(l => grater[Game].asObject(l)).toList
   }
 }
