@@ -19,7 +19,6 @@ class MongoBoardRepository(boardCollection: BoardCollection) extends BoardReposi
     boardCollection.collection.findAndRemove(MongoDBObject("id" -> board.id)).isDefined
   }
 
-
   override def getById(id: String): Option[Board] = {
 
     boardCollection.collection.findOne(MongoDBObject("id" -> id)) match {

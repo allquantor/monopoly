@@ -1,8 +1,9 @@
 package com.haw.monopoly.web
 
-import com.haw.monopoly.core.Estate
 import com.haw.monopoly.core.entities.game.Game
-import com.haw.monopoly.data.repositories.{EstateRepository, BrokersRepository}
+import com.haw.monopoly.core.player.{Place, PlayerEvents}
+import com.haw.monopoly.core.{Estate, Event}
+import com.haw.monopoly.data.repositories.{BrokersRepository, EstateRepository}
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra.ScalatraServlet
 import org.scalatra.json.JacksonJsonSupport
@@ -10,7 +11,7 @@ import org.scalatra.json.JacksonJsonSupport
 /**
   * Created by Ivan Morozov on 12/12/15.
   */
-class BrokersController(brokersRepository: BrokersRepository,estateRepository: EstateRepository) extends  ScalatraServlet with JacksonJsonSupport{
+class BrokersController(brokersRepository: BrokersRepository, estateRepository: EstateRepository) extends ScalatraServlet with JacksonJsonSupport {
   override protected implicit def jsonFormats: Formats = DefaultFormats
 
   put("/:gameid") {
@@ -24,16 +25,16 @@ class BrokersController(brokersRepository: BrokersRepository,estateRepository: E
     val placeid = params("placeid")
     val gameId = params("gameid")
 
-    val place = ((parse(request.body) \ "place" )).extract[String]
-    val owner = ((parse(request.body) \ "owner" )).extract[String]
-    val value = ((parse(request.body) \ "value" )).extract[Int]
-    val rent = ((parse(request.body) \ "rent" )).extract[Array[Int]]
-    val cost = ((parse(request.body) \ "cost" )).extract[Array[Int]]
-    val houses = ((parse(request.body) \ "houses" )).extract[Int]
+    val place = ((parse(request.body) \ "place")).extract[String]
+    val owner = ((parse(request.body) \ "owner")).extract[String]
+    val value = ((parse(request.body) \ "value")).extract[Int]
+    val rent = ((parse(request.body) \ "rent")).extract[Array[Int]]
+    val cost = ((parse(request.body) \ "cost")).extract[Array[Int]]
+    val houses = ((parse(request.body) \ "houses")).extract[Int]
 
-    val estate = Estate(placeid,place,owner,value,rent,cost,houses)
+    val estate = Estate(placeid, place, owner, value, rent, cost, houses)
 
-    estateRepository.create(estate,gameId).getOrElse(status_=(404))
+    estateRepository.create(estate, gameId).getOrElse(status_=(404))
   }
 
   post("/:gameid/places/:placeid/visit/:playerid") {
@@ -41,13 +42,21 @@ class BrokersController(brokersRepository: BrokersRepository,estateRepository: E
     val placeid = params("placeid")
     val playerid = params("playerid")
 
-    estateRepository.findByPlaceId(gameid,placeid).map { estate =>
-      // was soll hier passieren
-      // case 1  => Grundstück gehört bereits mir kann häuser drauf bauen
-      // case 2 => Grundstück gehört jemanden anderen ich muss berechenen wieviel häuser er hat und miete an ihn zahlen
-      // case 3 => Grundstück gehört  keinen soll ich es kaufen ja oder nein wocher weiss ich das? Wennn notifizieren ich wenn ich es weiss
-      estate.owner
-    }.getOrElse(status_=(404))
+    estateRepository.findByPlaceId(gameid, placeid).map {
+      case someestate if (someestate.owner == playerid) => {
+        Event("1", "Already Owned", "Aleady Owned Event Name", "Because You have it", "Ressource", PlayerEvents(
+          playerid, "playerThatAlreadHave", "callMeMaybe.de", Place("id", placeid), 13, true))
+      }
+      case someestate if (someestate.owner == "null") => {
+        Event("3", "You can buy it", "Free to buy", "On Market", "Ressource",null)
+      }
+      case someestate if (someestate.owner != playerid) => {
+        Event("3", "Pay Rent", "RentToPay", "500", "Bank",PlayerEvents(
+          "5", "Playaaa", "callMeMaybe.de", Place("id", "15"), 15, false))
+      }
+    }.getOrElse("THIS ESTATE DOES NOT EXIST IN OUR ESTATE REPOSITORY")
+
+
   }
 
 
@@ -57,9 +66,8 @@ class BrokersController(brokersRepository: BrokersRepository,estateRepository: E
     val playerid = params("playerid")
 
 
-    // 409 wenn es bereits jemand hat
-    // sonnst 202 falls erfolgreich
-    estateRepository.updateEstate(id,gameid,playerid)
+
+    estateRepository.updateEstate(id, gameid, playerid)
   }
 
 

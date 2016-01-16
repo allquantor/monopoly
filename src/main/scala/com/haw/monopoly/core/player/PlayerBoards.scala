@@ -6,3 +6,6 @@ package com.haw.monopoly.core.player
 case class PlayerBoards(id: String, place: Place, position: Int)
 
 case class Place(id: String, name: String)
+
+
+

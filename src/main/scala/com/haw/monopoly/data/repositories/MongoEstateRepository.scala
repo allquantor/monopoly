@@ -27,5 +27,18 @@ class MongoEstateRepository(collection:EstateCollection) extends EstateRepositor
     )
   }
 
-  override def updateEstate(id: String, gameid: String, playerid: String): Option[Estate] = ???
+  override def updateEstate(id: String, gameid: String, playerid: String): Option[Estate] = {
+    collection.collection.findOne( MongoDBObject(
+      "gameid" -> gameid,
+      "id" -> id)
+    ).map {EstateTransformer.deserialize}.map {estate => estate.copy(owner = playerid)}.map { newstate =>
+      collection.collection.findAndRemove( MongoDBObject(
+        "gameid" -> gameid,
+        "id" -> id)
+      )
+      val obj = grater[Estate].asDBObject(newstate)
+      collection.collection.save(obj)
+      newstate
+    }
+  }
 }
