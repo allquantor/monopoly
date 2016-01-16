@@ -20,6 +20,8 @@ class GamesController(gameRepo: GameRepository,
 
   val logger = LoggerFactory.getLogger(getClass)
 
+  val locationHeader = ""
+
 
   override protected implicit def jsonFormats: Formats = DefaultFormats
 
@@ -35,6 +37,8 @@ class GamesController(gameRepo: GameRepository,
       case Success(r) => logger.info(s"We had an successful board creation to gameId:${gameId} and got Board ${r.toString}")
       case Failure(r) => logger.info(s"We got an failure by board creation from game ${r.getMessage}")
     }
+
+    //response.setHeader("location","ressouce.de")
     result
   }
 
