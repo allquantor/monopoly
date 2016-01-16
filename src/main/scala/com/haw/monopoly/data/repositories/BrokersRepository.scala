@@ -7,5 +7,6 @@ import com.haw.monopoly.core.Broker
   */
 trait BrokersRepository {
   def create(brokerId:String): Option[Broker]
+  def findById(brokerId:String): Option[Broker]
 
 }

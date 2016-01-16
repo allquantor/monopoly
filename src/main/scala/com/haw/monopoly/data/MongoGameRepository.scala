@@ -77,7 +77,7 @@ class MongoGameRepository(collectionGames: GamesCollection, collectionMutex: Mut
   override def create(id: String): Option[Game] = {
 
     //todo dynamical host resolving
-    val newgame = Game(id,selfhost,Set(),null)
+    val newgame = Game(id,selfhost,Set(),null,s"/games/$id/players",false)
     val newgamedbobject = grater[Game].asDBObject(newgame)
 
     logger.info(s"Trying to create game: ${newgamedbobject}")

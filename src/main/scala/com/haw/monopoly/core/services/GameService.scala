@@ -22,7 +22,7 @@ object GameService {
 
     def _updateBoard(player:PlayerGames) = {
 
-      val playerBoards = PlayerBoards(player.id, Place("0","Start"), 0)
+      val playerBoards = PlayerBoards(player.id, "Start", 0, player.name, s"boards/$gameId/players/${player.name} ")
 
       BoardService.getCurrentBoard(gameId,boardRepo).map { board =>
         // our board can register a player only when the player already exists in games
@@ -59,7 +59,7 @@ object GameService {
   }
 
 
-  def getPlayerPosition(gameId: String, playerId: String, gameRepository: GameRepository, boardRepository: BoardRepository): Option[Place] = {
+  def getPlayerPosition(gameId: String, playerId: String, gameRepository: GameRepository, boardRepository: BoardRepository): Option[String] = {
       boardRepository.getById(gameId).flatMap { board =>
         board.player.find(_.id == playerId).map {
           _.place

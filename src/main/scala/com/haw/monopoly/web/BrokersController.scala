@@ -71,6 +71,13 @@ class BrokersController(brokersRepository: BrokersRepository, estateRepository: 
   }
 
 
+  get("/:gameid/places/:placeid") {
+    val gameId = params("gameid")
+    val placeid = params("placeid")
+    brokersRepository.findById(gameId).map(b => b.places.filter(_.id == placeid.toInt)).get
+  }
+
+
 
   before() {
     contentType = formats("json")

@@ -13,12 +13,13 @@ object BoardService {
 
   def changeBoardState(board: Board, dice1: Dice, dice2: Dice, repo: BoardRepository, playerId: String): Option[Board] = {
 
+
     val changedPlayer = board.player.find(_.id == playerId).map { p =>
       p.copy(id = playerId,
-        place = p.place.copy(p.place.id,
-          "JUST SUCCESSFULLY MOVED - STREET")
+        place = s"/boards/${board.id}/places/${p.position + dice1.number+dice2.number}"
       ,position = p.position + dice1.number + dice2.number)
     }.getOrElse(throw new Exception("No player was found"))
+
 
     val newBoard = board.copy(player = (board.player.filter(_.id != playerId) + changedPlayer))
     repo.update(newBoard)

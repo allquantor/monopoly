@@ -1,16 +1,14 @@
 package com.haw.monopoly.data
 
+import com.haw.monopoly.core._
 import com.haw.monopoly.core.entities.board.Board
 import com.haw.monopoly.core.entities.game.{Components, Game}
 import com.haw.monopoly.core.player._
-import com.haw.monopoly.core.{Estate, Event, Point, Subscription}
 import com.mongodb.DBObject
 import com.mongodb.casbah.commons.Imports._
 import com.novus.salat._
 import com.novus.salat.json._
 import com.novus.salat.transformers._
-
-
 
 
 trait SalatContext {
@@ -70,13 +68,18 @@ trait SalatContext {
 
       val position = b.get("position").asInstanceOf[Int]
 
-      val place = PlaceTransformer.deserialize(b.get("place").asInstanceOf[DBObject])
+      //val place = PlaceTransformer.deserialize(b.get("place").asInstanceOf[DBObject])
+      val place = b.get("place").asInstanceOf[String]
 
-      PlayerBoards(id, place, position)
+      val name = b.get("name").asInstanceOf[String]
+
+      val uri = b.get("uri").asInstanceOf[String]
+
+      PlayerBoards(id, place, position, name, uri)
     }
 
     override def serialize(a: PlayerBoards): DBObject = {
-      MongoDBObject("id" -> a.id, "position" -> a.position, "place" -> PlaceTransformer.serialize(a.place))
+      MongoDBObject("id" -> a.id, "position" -> a.position, "place" -> a.place, "uri" -> a.uri)
     }
   }
 
@@ -87,7 +90,7 @@ trait SalatContext {
       val playerGames = b.get("player").asInstanceOf[Set[DBObject]].map(PlayerGameTransformer.deserialize)
       val components = ComponentsTransformer.deserialize(b.get("components").asInstanceOf[DBObject])
       val uri = b.get("uri").asInstanceOf[String]
-      Game(id, uri, playerGames, components)
+      Game(id, uri, playerGames, components, s"/$id/players", false)
     }
 
     override def serialize(a: Game): DBObject = {
@@ -96,7 +99,9 @@ trait SalatContext {
         "gameid" -> a.gameid,
         "uri" -> a.uri,
         "player" -> a.players.map(PlayerGameTransformer.serialize),
-        "components" -> ComponentsTransformer.serialize(a.components)
+        "components" -> ComponentsTransformer.serialize(a.components),
+        "_players" -> a._players,
+        "ready" -> a.ready
       )
     }
   }
@@ -243,12 +248,13 @@ trait SalatContext {
 
 
   object EstateTransformer extends CustomTransformer[Estate, DBObject] {
+
     import scala.collection.JavaConverters._
 
     override def deserialize(b: DBObject): Estate = {
 
       val rent = b.getAs[java.util.List[Int]]("rent").get.asScala.toArray
-      val cost =  b.getAs[java.util.List[Int]]("cost").get.asScala.toArray
+      val cost = b.getAs[java.util.List[Int]]("cost").get.asScala.toArray
 
       Estate(
         b.get("id").asInstanceOf[String],
@@ -272,8 +278,57 @@ trait SalatContext {
         "houses" -> a.houses
       )
     }
+  }
 
 
+
+
+  object NewPlacesTransformer extends CustomTransformer[NewPlace, DBObject] {
+    override def deserialize(b: DBObject): NewPlace = {
+      import scala.collection.JavaConverters._
+
+      val rent = b.getAs[java.util.List[Int]]("rent").get.asScala.toArray
+      val cost = b.getAs[java.util.List[Int]]("cost").get.asScala.toArray
+
+      NewPlace(
+        b.get("id").asInstanceOf[Int],
+        b.get("place").asInstanceOf[String],
+        b.get("owner").asInstanceOf[String],
+        b.get("value").asInstanceOf[Int],
+        rent,
+        cost,
+        b.get("houses").asInstanceOf[Int]
+      )
+    }
+
+    override def serialize(a: NewPlace): DBObject = {
+      MongoDBObject(
+        "id" -> a.id,
+        "place" -> a.place,
+        "owner" -> a.owner,
+        "value" -> a.value,
+        "rent" -> a.rent,
+        "cost" -> a.cost,
+        "houses" -> a.houses
+      )
+    }
+  }
+
+  object BrokerTransformer extends CustomTransformer[Broker, DBObject] {
+    override def deserialize(b: DBObject): Broker = {
+
+      Broker(
+        b.get("id").asInstanceOf[String],
+        b.get("places").asInstanceOf[List[DBObject]].map(dbo => NewPlacesTransformer.deserialize(dbo))
+      )
+    }
+
+    override def serialize(a: Broker): DBObject = {
+      MongoDBObject(
+        "id" -> a.id,
+        "places" -> a.places
+      )
+    }
   }
 
 
@@ -293,6 +348,8 @@ trait SalatContext {
     registerCustomTransformer(PlayerEventTransformer)
     registerCustomTransformer(ComponentsTransformer)
     registerCustomTransformer(EstateTransformer)
+    registerCustomTransformer(NewPlacesTransformer)
+    registerCustomTransformer(BrokerTransformer)
 
 
     // registerGlobalKeyOverride(remapThis = "id", toThisInstead = "_id")

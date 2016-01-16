@@ -1,9 +1,10 @@
 package com.haw.monopoly.web
 
 import com.haw.monopoly.core.entities.game.{GameWithPlayerLinks, Game, Components}
+import com.haw.monopoly.core.player.PlayerGames
 import com.haw.monopoly.core.services.GameService
 import com.haw.monopoly.data.repositories.MutexStatusCodes._
-import com.haw.monopoly.data.repositories.{BoardRepository, GameRepository}
+import com.haw.monopoly.data.repositories.{BrokersRepository, BoardRepository, GameRepository}
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra.ScalatraServlet
 import org.scalatra.json.JacksonJsonSupport
@@ -11,12 +12,15 @@ import org.slf4j.LoggerFactory
 import dispatch._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
+import org.json4s.native.Serialization.write
+
 
 /**
   * Created by Ivan Morozov on 06/11/15.
   */
 class GamesController(gameRepo: GameRepository,
-                      boardRepo: BoardRepository
+                      boardRepo: BoardRepository,
+                      brokerRepository:BrokersRepository
                      ) extends ScalatraServlet with JacksonJsonSupport {
 
   val logger = LoggerFactory.getLogger(getClass)
@@ -46,13 +50,15 @@ class GamesController(gameRepo: GameRepository,
 
     val components = ((parse(request.body)) \ "components").extract[Components]
 
-    val game = Game(gameId,ourUri,Set(),components)
+    val game = Game(gameId,ourUri,Set(),components,s"/games/$gameId/players",false)
     val result = gameRepo.create(game)
 
     logger.info(s"Game creation result ${result}")
 
     // todo adresse to boards from components object getten
     val myreq = host("localhost",9999)
+
+
 
      Http(myreq / "boards" / s"$gameId" PUT).onComplete {
       case Success(r) => {
@@ -69,6 +75,8 @@ class GamesController(gameRepo: GameRepository,
         "NO-BOARD-CREATED"
       }
     }
+
+    brokerRepository.create(game.gameid)
 
     response.setHeader("location",result.get.uri)
 
@@ -111,8 +119,41 @@ class GamesController(gameRepo: GameRepository,
 
   }
 
+  post("/:gameid/players") {
+    val gameId = params("gameid")
+    val gamePlayer = (parse(request.body)).extract[PlayerGames]
+    val gameThatIsSelected = gameRepo.getById(gameId).get
+
+    val newGame = gameThatIsSelected.copy(players = gameThatIsSelected.players + gamePlayer)
+
+    gameRepo.delete(gameId)
+    gameRepo.create(newGame)
+
+    // start to set to remote board
+
+    //todo parse port
+    val boardUri = host(newGame.components.board)
+    logger.info(s"Trying to set Player ${gamePlayer.name} on Board: ${boardUri.toRequest.getRawURI}")
 
 
+    Http(boardUri / "players" / gamePlayer.id PUT).onComplete {
+      case Success(r) => {
+        logger.info(s"We had an successful placing to gameId:${gameId} for Board ${r.toString} for player: ${gamePlayer}")
+
+      }
+      case Failure(r) =>  {
+        logger.info(s"We got an failure by PLAYER SETTING  from game ${r.getMessage}")
+
+      }
+    }
+
+    gamePlayer
+
+  }
+
+
+
+  /*
   get("/:gameid/players/:playerid") {
 
     val gameId = params("gameid")
@@ -122,6 +163,22 @@ class GamesController(gameRepo: GameRepository,
       status_=(404)
     )
 
+  }
+  */
+
+
+  get("/:gameid/players/:name") {
+
+    val gameId = params("gameid")
+    val playersName = params("name")
+
+    val game = gameRepo.getById(gameId).get
+
+    val player = game.players.filter(_.name ==playersName ).head
+
+
+    val q = parse(write(player)) merge parse(s"""{"ready":"/games/$gameId/players/${player.id}/ready"}""")
+    q
   }
 
   get("/:gameid") {

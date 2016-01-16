@@ -8,7 +8,7 @@ import com.haw.monopoly.core.player.PlayerGames
   */
 
 // components = Name -> Id
-case class Game(gameid: String, uri:String, players: Set[PlayerGames],components:Components)
+case class Game(gameid: String, uri:String, players: Set[PlayerGames],components:Components,_players:String,ready:Boolean)
 
 
 case class Components(game:String,dice:String,board:String,bank:String,broker:String,decks:String,events:String)
